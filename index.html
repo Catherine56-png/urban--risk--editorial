@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terracotta &amp; Tide — Urban Planning, Environment &amp; Risk Notes</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --surface: #ffffff;
+      --surface-alt: #efeae0;
+      --text: #1c211e;
+      --muted: #5a625c;
+      --accent: #1f5c48;
+      --accent-soft: #e3efe9;
+      --terracotta: #b4532a;
+      --border: #ded8cc;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+    }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .nav-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--terracotta);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.1rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    nav a:hover, nav button:hover {
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      color: #fff;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--terracotta);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    /* Filter & Search Bar */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tab {
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .search-input {
+      padding: 0.5rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      min-width: 240px;
+      font-size: 0.9rem;
+    }
+
+    /* Articles Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .meta-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .tag {
+      background: var(--surface-alt);
+      color: var(--text);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      line-height: 1.35;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+
+    .card h2:hover {
+      color: var(--accent);
+    }
+
+    .card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Two-column sections below */
+    .split {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .panel h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .panel p {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-bottom: 1rem;
+    }
+
+    .field {
+      margin-bottom: 0.9rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .field input, .field select, .field textarea {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 0.9rem;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .status-msg {
+      margin-top: 0.6rem;
+      font-size: 0.88rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 20, 17, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      max-width: 680px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      border: 1px solid var(--border);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-body p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-wrap">
+      <a class="brand" href="#top">
+        <span class="brand-dot"></span>
+        <span>Terracotta &amp; Tide</span>
+      </a>
+      <nav>
+        <a href="#articles">Articles</a>
+        <a href="#composer">Publish Post</a>
+        <a href="#about">About</a>
+        <a href="#newsletter">Newsletter</a>
+        <button class="btn" id="bookmarksBtn" type="button">Saved (<span id="savedCount">0</span>)</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="top">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Field Notes &amp; Policy Essays</div>
+        <h1>Urban Planning, Ecological Resilience &amp; Risk Management</h1>
+        <p>
+          Research essays, case reflections, and practical frameworks on how cities adapt to climate stress,
+          manage watershed and infrastructure risk, and build livable public spaces.
+        </p>
+      </div>
+    </section>
+
+    <section id="articles">
+      <div class="controls">
+        <div class="tabs" id="categoryTabs">
+          <button class="tab active" data-category="All" type="button">All</button>
+          <button class="tab" data-category="Urban Planning" type="button">Urban Planning</button>
+          <button class="tab" data-category="Environment" type="button">Environment</button>
+          <button class="tab" data-category="Risk Management" type="button">Risk Management</button>
+          <button class="tab" data-category="Saved" type="button">Saved</button>
+        </div>
+        <input class="search-input" id="searchInput" type="search" placeholder="Search articles, topics, keywords..." />
+      </div>
+
+      <div class="grid" id="articlesGrid"></div>
+    </section>
+
+    <section class="split">
+      <div class="panel" id="composer">
+        <h3>Write &amp; Publish an Article</h3>
+        <p>Add a new essay or field note directly to the reading feed (stored locally in your browser).</p>
+        <form id="postForm">
+          <div class="field">
+            <label for="postTitle">Title</label>
+            <input id="postTitle" type="text" required placeholder="e.g., Restoring Riparian Corridors in Growing Towns" />
+          </div>
+          <div class="field">
+            <label for="postCategory">Topic</label>
+            <select id="postCategory">
+              <option value="Urban Planning">Urban Planning</option>
+              <option value="Environment">Environment</option>
+              <option value="Risk Management">Risk Management</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="postExcerpt">Short Summary</label>
+            <input id="postExcerpt" type="text" required placeholder="One or two sentences summarizing the key takeaway..." />
+          </div>
+          <div class="field">
+            <label for="postBody">Article Body</label>
+            <textarea id="postBody" required placeholder="Write your full article here. Separate paragraphs with a blank line."></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Publish to Feed</button>
+          <div class="status-msg" id="postStatus" role="status"></div>
+        </form>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="panel" id="about">
+          <div class="eyebrow">Author &amp; Practice</div>
+          <h3>About the Writer</h3>
+          <p>
+            Focused on translating spatial planning, environmental stewardship, and hazard risk analysis into
+            clear decisions for municipalities, communities, and project teams.
+          </p>
+          <p style="margin-bottom: 0;">
+            <strong>Core themes:</strong> Land-use zoning &amp; transit access, urban heat &amp; watershed health,
+            disaster preparedness, and early-warning governance.
+          </p>
+        </div>
+
+        <div class="panel" id="newsletter">
+          <h3>Dispatches &amp; Reading List</h3>
+          <p>Receive occasional notes when new essays or policy briefs are published.</p>
+          <form id="newsletterForm">
+            <div class="field">
+              <label for="subEmail">Email Address</label>
+              <input id="subEmail" type="email" required placeholder="reader@example.com" />
+            </div>
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+            <div class="status-msg" id="subStatus" role="status"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="readerModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="meta-top">
+            <span class="tag" id="modalCategory"></span>
+            <span id="modalDate"></span>
+          </div>
+          <h2 id="modalTitle"></h2>
+        </div>
+        <button class="btn" id="closeModalBtn" type="button">Close</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions">
+        <button class="btn" id="bookmarkModalBtn" type="button">Save Article</button>
+        <button class="btn" id="copyLinkBtn" type="button">Copy Link</button>
+        <span class="status-msg" id="modalStatus" style="margin-top: 0; align-self: center;"></span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Terracotta &amp; Tide — Editorial notes on urban planning, environment, and risk management.
+  </footer>
+
+  <script>
+    const DEFAULT_ARTICLES = [
+      {
+        id: "walkable-corridors-heat",
+        title: "Designing Shaded Corridors for High-Density Neighborhoods",
+        category: "Urban Planning",
+        date: "Nov 2026",
+        readTime: "4 min read",
+        excerpt: "How street tree canopies, permeable paving, and mixed-use blocks lower surface heat while keeping daily errands walkable.",
+        body: [
+          "Rapid urban growth often concentrates impervious surfaces—asphalt roads, concrete courtyards, and dark rooftops—that trap daytime heat long after sunset.",
+          "Pairing street-level shade trees with permeable drainage strips does double duty: it cools pedestrian routes and reduces flash runoff into storm channels.",
+          "Effective planning treats green space and transit access as connected infrastructure rather than leftover decorative plots."
+        ]
+      },
+      {
+        id: "wetlands-buffer-zones",
+        title: "Why Peri-Urban Wetlands Are Frontline Risk Buffers",
+        category: "Environment",
+        date: "Oct 2026",
+        readTime: "5 min read",
+        excerpt: "Preserving natural floodplains and wetlands protects downstream housing and supports biodiversity at a fraction of grey-infrastructure cost.",
+        body: [
+          "When natural wetlands are drained or built over, peak storm flows move faster and hit low-lying settlements harder.",
+          "Mapping ecological buffer zones early in master planning helps balance housing demand with long-term watershed stability.",
+          "Community co-management and clear boundary markers are essential so conservation holds up under land pressure."
+        ]
+      },
+      {
+        id: "community-hazard-mapping",
+        title: "Practical Risk Registers Beyond Technical Reports",
+        category: "Risk Management",
+        date: "Sep 2026",
+        readTime: "4 min read",
+        excerpt: "Turning hazard maps into actionable neighborhood checklists, maintenance triggers, and clear response roles before emergencies strike.",
+        body: [
+          "Many risk assessments sit unread in PDFs because they do not specify who checks drainage culverts before rainy season or how alerts reach households.",
+          "A strong risk management workflow links likelihood and impact directly to concrete triggers, owners, and budgets.",
+          "Regular drills and simple local maps turn abstract risk scores into everyday readiness."
+        ]
+      }
+    ];
+
+    const STORAGE_KEYS = {
+      articles: "tt_articles_v1",
+      saved: "tt_saved_v1"
+    };
+
+    let activeCategory = "All";
+    let searchQuery = "";
+    let currentArticleId = null;
+
+    function loadArticles() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.articles);
+        if (!raw) return [...DEFAULT_ARTICLES];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length ? parsed : [...DEFAULT_ARTICLES];
+      } catch {
+        return [...DEFAULT_ARTICLES];
+      }
+    }
+
+    function saveArticles(list) {
+      localStorage.setItem(STORAGE_KEYS.articles, JSON.stringify(list));
+    }
+
+    function loadSavedIds() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.saved);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveSavedIds(ids) {
+      localStorage.setItem(STORAGE_KEYS.saved, JSON.stringify(ids));
+      updateSavedCount();
+    }
+
+    function updateSavedCount() {
+      document.getElementById("savedCount").textContent = loadSavedIds().length;
+    }
+
+    function renderArticles() {
+      const grid = document.getElementById("articlesGrid");
+      const all = loadArticles();
+      const savedIds = loadSavedIds();
+      const q = searchQuery.trim().toLowerCase();
+
+      const filtered = all.filter((item) => {
+        const matchesCat =
+          activeCategory === "All" ||
+          (activeCategory === "Saved" ? savedIds.includes(item.id) : item.category === activeCategory);
+        const matchesSearch =
+          !q ||
+          item.title.toLowerCase().includes(q) ||
+          item.excerpt.toLowerCase().includes(q) ||
+          item.category.toLowerCase().includes(q) ||
+          item.body.join(" ").toLowerCase().includes(q);
+        return matchesCat && matchesSearch;
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="panel" style="grid-column: 1 / -1;"><p style="margin:0;">No articles match your current filter or search.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered
+        .map(
+          (item) => `
+          <article class="card">
+            <div>
+              <div class="meta-top">
+                <span class="tag">${escapeHtml(item.category)}</span>
+                <span>${escapeHtml(item.date)} · ${escapeHtml(item.readTime)}</span>
+              </div>
+              <h2 onclick="openArticle('${escapeHtml(item.id)}')">${escapeHtml(item.title)}</h2>
+              <p>${escapeHtml(item.excerpt)}</p>
+            </div>
+            <div class="card-footer">
+              <button class="link-btn" type="button" onclick="openArticle('${escapeHtml(item.id)}')">Read essay →</button>
+              <button class="link-btn" type="button" onclick="toggleSave('${escapeHtml(item.id)}')">
+                ${savedIds.includes(item.id) ? "Saved" : "Save"}
+              </button>
+            </div>
+          </article>
+        `
+        )
+        .join("");
+    }
+
+    function openArticle(id) {
+      const article = loadArticles().find((a) => a.id === id);
+      if (!article) return;
+      currentArticleId = id;
+
+      document.getElementById("modalCategory").textContent = article.category;
+      document.getElementById("modalDate").textContent = `${article.date} · ${article.readTime}`;
+      document.getElementById("modalTitle").textContent = article.title;
+      document.getElementById("modalBody").innerHTML = article.body
+        .map((para) => `<p>${escapeHtml(para)}</p>`)
+        .join("");
+      document.getElementById("modalStatus").textContent = "";
+
+      syncBookmarkButton();
+      const modal = document.getElementById("readerModal");
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("readerModal");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      currentArticleId = null;
+    }
+
+    function toggleSave(id) {
+      const saved = loadSavedIds();
+      const idx = saved.indexOf(id);
+      if (idx === -1) {
+        saved.push(id);
+      } else {
+        saved.splice(idx, 1);
+      }
+      saveSavedIds(saved);
+      syncBookmarkButton();
+      renderArticles();
+    }
+
+    function syncBookmarkButton() {
+      const btn = document.getElementById("bookmarkModalBtn");
+      if (!currentArticleId) return;
+      const isSaved = loadSavedIds().includes(currentArticleId);
+      btn.textContent = isSaved ? "Saved ✓" : "Save Article";
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // Event listeners
+    document.getElementById("categoryTabs").addEventListener("click", (e) => {
+      const btn = e.target.closest(".tab");
+      if (!btn) return;
+      document.querySelectorAll("#categoryTabs .tab").forEach((t) => t.classList.remove("active"));
+      btn.classList.add("active");
+      activeCategory = btn.dataset.category;
+      renderArticles();
+    });
+
+    document.getElementById("bookmarksBtn").addEventListener("click", () => {
+      activeCategory = "Saved";
+      document.querySelectorAll("#categoryTabs .tab").forEach((t) => {
+        t.classList.toggle("active", t.dataset.category === "Saved");
+      });
+      renderArticles();
+      document.getElementById("articles").scrollIntoView({ behavior: "smooth" });
+    });
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderArticles();
+    });
+
+    document.getElementById("postForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const title = document.getElementById("postTitle").value.trim();
+      const category = document.getElementById("postCategory").value;
+      const excerpt = document.getElementById("postExcerpt").value.trim();
+      const rawBody = document.getElementById("postBody").value.trim();
+      if (!title || !excerpt || !rawBody) return;
+
+      const paragraphs = rawBody
+        .split(/\n\s*\n/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+      const wordCount = rawBody.split(/\s+/).length;
+      const readTime = `${Math.max(1, Math.round(wordCount / 200))} min read`;
+
+      const newPost = {
+        id: "post-" + Date.now(),
+        title,
+        category,
+        date: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+        readTime,
+        excerpt,
+        body: paragraphs.length ? paragraphs : [rawBody]
+      };
+
+      const updated = [newPost, ...loadArticles()];
+      saveArticles(updated);
+      renderArticles();
+      e.target.reset();
+      document.getElementById("postStatus").textContent = "Published to your local feed.";
+    });
+
+    document.getElementById("newsletterForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("subEmail").value.trim();
+      if (!email) return;
+      document.getElementById("subStatus").textContent = `Subscribed ${email} (demo confirmation).`;
+      e.target.reset();
+    });
+
+    document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+    document.getElementById("readerModal").addEventListener("click", (e) => {
+      if (e.target.id === "readerModal") closeModal();
+    });
+
+    document.getElementById("bookmarkModalBtn").addEventListener("click", () => {
+      if (currentArticleId) toggleSave(currentArticleId);
+    });
+
+    document.getElementById("copyLinkBtn").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        document.getElementById("modalStatus").textContent = "Link copied.";
+      } catch {
+        document.getElementById("modalStatus").textContent = "Copy link from address bar.";
+      }
+    });
+
+    updateSavedCount();
+    renderArticles();
+  </script>
+</body>
+</html>
